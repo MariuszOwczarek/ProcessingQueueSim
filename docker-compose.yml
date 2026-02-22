@@ -1,0 +1,10 @@
+services:
+  registry_app:
+    build: .
+    container_name: registry_app
+    volumes:
+      - ./data/config.yaml:/app/config.yaml:ro    # plik konfiguracyjny tylko do odczytu
+      - ./data:/app/data                     # katalog na zapisane pliki CSV
+    stdin_open: true
+    tty: true
+    command: python person_registry.py

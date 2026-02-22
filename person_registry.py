@@ -227,7 +227,7 @@ class PipelineOrchestrator:
 
 if __name__ == "__main__":
 
-    config = Config("config.yaml").load()
+    config = Config("data/config.yaml").load()
 
     if config["registry"]["limit"] <= 0:
         raise ValueError("Registry limit must be positive")

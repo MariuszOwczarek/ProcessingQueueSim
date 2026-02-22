@@ -83,6 +83,60 @@ Each tick the simulation:
 4. Generates and adds new people
 5. Logs the current state
 
+## Running with Docker
+You can also run the queue simulator inside a Docker container. This ensures a consistent environment without installing Python dependencies locally.
+Build and Run with Docker Compose
+Make sure your folder structure looks like this:
+
+queue-simulator/
+├── person_registry.py
+├── data/
+│   └── config.yaml
+├── requirements.txt
+├── docker-compose.yml
+├── dockerfile
+└── .gitignore
+
+CREATE:
+docker-compose.yml:
+
+services:
+  registry_app:
+    build: .
+    container_name: registry_app
+    volumes:
+      - ./data/config.yaml:/app/config.yaml:ro    # plik konfiguracyjny tylko do odczytu
+      - ./data:/app/data                     # katalog na zapisane pliki CSV
+    stdin_open: true
+    tty: true
+    command: python person_registry.py
+
+CREATE:
+dockerfile:
+
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY person_registry.py .
+
+VOLUME ["/app/data"]
+
+Then, build and start the container:
+docker compose up --build -d
+
+The app will run in the container and write the registry.csv output to the data/ folder on your host.
+
+To start container:
+docker start registry_app
+
+To see working app:
+docker logs -f registry_app
+
+
 ## Requirements
 
 - Python 3.10+
