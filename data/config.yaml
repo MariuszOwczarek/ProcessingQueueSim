@@ -1,0 +1,77 @@
+registry:
+  limit: 10
+
+generator:
+  min_user_per_tick: 1
+  max_user_per_tick: 5
+  min_processing_time: 1
+  max_processing_time: 4
+  names:
+    - Anna
+    - Piotr
+    - Katarzyna
+    - Michał
+    - Agnieszka
+    - Tomasz
+    - Magdalena
+    - Krzysztof
+    - Ewa
+    - Paweł
+    - Joanna
+    - Marcin
+    - Monika
+    - Łukasz
+    - Aleksandra
+    - Mateusz
+    - Karolina
+    - Adam
+    - Natalia
+    - Sebastian
+    - Barbara
+    - Rafał
+    - Dominika
+    - Grzegorz
+    - Justyna
+    - Dawid
+    - Oliwia
+    - Jakub
+    - Weronika
+    - Szymon
+  surnames:
+    - Nowak
+    - Kowalski
+    - Wiśniewski
+    - Wójcik
+    - Kowalczyk
+    - Kamiński
+    - Lewandowski
+    - Zieliński
+    - Szymański
+    - Woźniak
+    - Dąbrowski
+    - Kozłowski
+    - Jankowski
+    - Mazur
+    - Kwiatkowski
+    - Krawczyk
+    - Piotrowski
+    - Grabowski
+    - Nowakowski
+    - Pawłowski
+    - Michalski
+    - Król
+    - Wieczorek
+    - Wróbel
+    - Jabłoński
+    - Olszewski
+    - Stępień
+    - Malinowski
+    - Górski
+    - Sikora
+
+pipeline:
+  tick_interval: 10
+  tick_time_interval: 1
+
+file:
+  output: "data/registry.csv"
