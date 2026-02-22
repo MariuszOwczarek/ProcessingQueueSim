@@ -88,6 +88,7 @@ You can also run the queue simulator inside a Docker container. This ensures a c
 Build and Run with Docker Compose
 Make sure your folder structure looks like this:
 
+```python
 queue-simulator/
 ├── person_registry.py
 ├── data/
@@ -96,10 +97,12 @@ queue-simulator/
 ├── docker-compose.yml
 ├── dockerfile
 └── .gitignore
+```
 
 CREATE:
 docker-compose.yml:
 
+```python
 services:
   registry_app:
     build: .
@@ -110,10 +113,12 @@ services:
     stdin_open: true
     tty: true
     command: python person_registry.py
+```
 
 CREATE:
 dockerfile:
 
+```python
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -124,18 +129,24 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY person_registry.py .
 
 VOLUME ["/app/data"]
+```
 
 Then, build and start the container:
+```python
 docker compose up --build -d
+```
 
 The app will run in the container and write the registry.csv output to the data/ folder on your host.
 
 To start container:
+```python
 docker start registry_app
+```
 
 To see working app:
+```python
 docker logs -f registry_app
-
+```
 
 ## Requirements
 
