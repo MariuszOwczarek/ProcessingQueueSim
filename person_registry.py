@@ -6,9 +6,11 @@ from enum import Enum, auto
 from uuid import UUID, uuid4
 import logging
 from time import sleep
+import csv
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
 
 class Config:
     def __init__(self, config_path):
@@ -24,11 +26,13 @@ class Config:
         except yaml.YAMLError as e:
             raise ValueError(f"Config file is invalid YAML: {e}")
 
+
 class Statuses(Enum):
     UNASSIGNED = auto()
     ASSIGNED = auto()
     WAITING = auto()
     COMPLETED = auto()
+
 
 class Person:
     def __init__(self, name, surname, email, processing_time):
@@ -58,6 +62,7 @@ class Person:
     def assign(self):
         self.assigned_at = datetime.now()
         self.status = Statuses.ASSIGNED
+
 
 class Registry:
     def __init__(self, limit: int = 20):
@@ -114,9 +119,25 @@ class Registry:
         person.completed_at = datetime.now()
         self.promote()
 
-    def report(self):
-        logger.info(f"Assigned: {len(self.__assigned_list)}/{self.limit} | "
-                    f"Awaiting: {len(self.__awaiting_queue)}")
+    def save(self, file):
+        with open(file, 'w', encoding="UTF-8") as f:
+            data = csv.writer(f, delimiter=',')
+            data.writerow(["Id_no",
+                           "Name",
+                           "Surname",
+                           "Email",
+                           "Registered",
+                           "Assigned",
+                           "Completed"])
+
+            for record in self.__completed_list:
+                data.writerow([record.id_no,
+                               record.name,
+                               record.surname,
+                               record.email,
+                               record.registered_at,
+                               record.assigned_at,
+                               record.completed_at])
 
     def report_detailed(self, added: int = 0, finished: int = 0):
         logger.info(f"Users Added: {added} | "
@@ -124,6 +145,7 @@ class Registry:
                     f"Users Assigned: {len(self.__assigned_list)}/{self.limit} | "
                     f"Users Awaiting: {len(self.__awaiting_queue)} | "
                     f"Users Completed total: {len(self.__completed_list)}")
+
 
 @dataclass
 class PersonGenerator:
@@ -174,7 +196,7 @@ class PipelineOrchestrator:
                     person.processing_time -= 1
 
                 finished = [p for p in self.registry.assigned_list
-                        if p.processing_time <=0]
+                            if p.processing_time <= 0]
 
                 for person in finished:
                     self.registry.complete(person)
@@ -190,6 +212,10 @@ class PipelineOrchestrator:
 
         logger.info(f"Simulation finished. "
                     f"Total completed: {len(self.registry.completed_list)}")
+
+        registry.save(file=config["file"]["output"])
+        logger.info("Process Saved")
+
 
 if __name__ == "__main__":
 
@@ -211,9 +237,3 @@ if __name__ == "__main__":
                                     config["pipeline"]["tick_interval"],
                                     config["pipeline"]["tick_time_interval"])
     pipeline.run()
-
-
-
-
-
-

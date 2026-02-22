@@ -16,7 +16,6 @@ A Python simulation of a processing queue system. People are generated each tick
 queue-simulator/
 ├── person_registry.py   # Main application
 ├── config.yaml          # Configuration file
-├── config.example.yaml  # Example configuration (safe to commit)
 ├── requirements.txt     # Dependencies
 └── .gitignore
 ```
@@ -57,6 +56,8 @@ generator:
 pipeline:
   tick_interval: 100         # Total number of ticks to run
   tick_time_interval: 1      # Seconds between ticks
+file:
+  output: "registry.csv".    # Output File with Result
 ```
 
 ## Usage
@@ -84,4 +85,4 @@ Each tick the simulation:
 ## Requirements
 
 - Python 3.10+
-- pyyaml
+- pyyaml==6.0.3

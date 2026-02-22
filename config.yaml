@@ -68,6 +68,10 @@ generator:
     - Malinowski
     - Górski
     - Sikora
+
 pipeline:
   tick_interval: 10
-  tick_time_interval: 5
+  tick_time_interval: 1
+
+file:
+  output: "registry.csv"
