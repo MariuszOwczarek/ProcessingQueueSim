@@ -4,9 +4,6 @@ __pycache__/
 *.pyo
 .venv/
 
-# Config z danymi lokalnymi
-config.yaml
-
 # IDE
 .vscode/
 .idea/

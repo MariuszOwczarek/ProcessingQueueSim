@@ -7,6 +7,8 @@ from uuid import UUID, uuid4
 import logging
 from time import sleep
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 class Config:
     def __init__(self, config_path):
         self.config_path = config_path
@@ -159,34 +161,36 @@ class PipelineOrchestrator:
         self.tick_time_interval = tick_time_interval
 
     def run(self):
-        while self.tick_interval > 0:
-            self.tick_interval -= 1
+        try:
+            while self.tick_interval > 0:
+                self.tick_interval -= 1
 
-            for person in self.registry.assigned_list:
-                person.processing_time -= 1
+                for person in self.registry.assigned_list:
+                    person.processing_time -= 1
 
-            finished = [p for p in self.registry.assigned_list
-                       if p.processing_time <=0]
+                finished = [p for p in self.registry.assigned_list
+                        if p.processing_time <=0]
 
-            for person in finished:
-                self.registry.complete(person)
+                for person in finished:
+                    self.registry.complete(person)
 
-            users = self.generator.generate()
-            for user in users:
-                self.registry.add(user)
+                users = self.generator.generate()
+                for user in users:
+                    self.registry.add(user)
 
-            self.registry.report_detailed(len(users), len(finished))
-            sleep(self.tick_time_interval)
+                self.registry.report_detailed(len(users), len(finished))
+                sleep(self.tick_time_interval)
+        except KeyboardInterrupt:
+            logger.info("Simulation stopped by user.")
 
         logger.info(f"Simulation finished. "
                     f"Total completed: {len(self.registry.completed_list)}")
 
 if __name__ == "__main__":
-
-    logger = logging.getLogger(__name__)
-    logging.basicConfig(level=logging.INFO)
-
     config = Config("config.yaml").load()
+    if config["registry"]["limit"] <=0:
+        raise ValueError("Registry limit must be positive")
+
     registry = Registry(limit=config["registry"]["limit"])
     generator = PersonGenerator(config["generator"]["min_user_per_tick"],
                                 config["generator"]["max_user_per_tick"],
