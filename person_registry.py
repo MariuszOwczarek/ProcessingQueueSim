@@ -105,18 +105,17 @@ class Registry:
             self.__awaiting_queue.append(person)
 
     def promote(self):
-        if self.__awaiting_queue:
-            if self.available_tickets > 0:
-                next_person = self.__awaiting_queue.pop(0)
-                next_person.assign()
-                self.__assigned_list.append(next_person)
+        while self.__awaiting_queue and self.available_tickets > 0:
+            next_person = self.__awaiting_queue.pop(0)
+            next_person.assign()
+            self.__assigned_list.append(next_person)
 
     def complete(self, person):
+        person.completed_at = datetime.now()
+        person.status = Statuses.COMPLETED
         self.__assigned_list.remove(person)
         self.__seen_ids.discard(person.id_no)
-        person.status = Statuses.COMPLETED
         self.__completed_list.append(person)
-        person.completed_at = datetime.now()
         self.promote()
 
     def save(self, file):
@@ -131,13 +130,18 @@ class Registry:
                            "Completed"])
 
             for record in self.__completed_list:
-                data.writerow([record.id_no,
-                               record.name,
-                               record.surname,
-                               record.email,
-                               record.registered_at,
-                               record.assigned_at,
-                               record.completed_at])
+                data.writerow([
+                    str(record.id_no),
+                    record.name,
+                    record.surname,
+                    record.email,
+                    (record.registered_at.isoformat()
+                     if record.registered_at else ""),
+                    (record.assigned_at.isoformat()
+                     if record.assigned_at else ""),
+                    (record.completed_at.isoformat()
+                     if record.completed_at else "")
+                ])
 
     def report_detailed(self, added: int = 0, finished: int = 0):
         logger.info(f"Users Added: {added} | "
@@ -213,7 +217,7 @@ class PipelineOrchestrator:
         logger.info(f"Simulation finished. "
                     f"Total completed: {len(self.registry.completed_list)}")
 
-        registry.save(file=config["file"]["output"])
+        self.registry.save(file=config["file"]["output"])
         logger.info("Process Saved")
 
 
