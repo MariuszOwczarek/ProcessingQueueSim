@@ -12,7 +12,7 @@ A Python simulation of a processing queue system. People are generated each tick
 
 ## Project Structure
 
-```
+```python
 queue-simulator/
 ├── person_registry.py   # Main application
 ├── config.yaml          # Configuration file
@@ -68,7 +68,7 @@ python person_registry.py
 
 Example output:
 
-```
+```python
 INFO:__main__:Users Added: 3 | Users Finished: 2 | Users Assigned: 8/10 | Users Awaiting: 0 | Users Completed total: 14
 INFO:__main__:Simulation finished. Total completed: 87
 ```
@@ -76,6 +76,7 @@ INFO:__main__:Simulation finished. Total completed: 87
 ## How It Works
 
 Each tick the simulation:
+
 1. Decrements processing time for all assigned people
 2. Removes people who have finished processing
 3. Promotes waiting people from the queue to fill empty slots

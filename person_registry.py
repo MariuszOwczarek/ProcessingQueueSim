@@ -22,7 +22,8 @@ class Config:
                 config = yaml.safe_load(f)
             return config
         except FileNotFoundError:
-            raise FileNotFoundError(f"Config file not found: {self.config_path}")
+            raise FileNotFoundError(
+                f"Config file not found: {self.config_path}")
         except yaml.YAMLError as e:
             raise ValueError(f"Config file is invalid YAML: {e}")
 
@@ -144,11 +145,14 @@ class Registry:
                 ])
 
     def report_detailed(self, added: int = 0, finished: int = 0):
+        assigned_count = len(self.__assigned_list)
+        awaiting_count = len(self.__awaiting_queue)
+        completed_count = len(self.__completed_list)
         logger.info(f"Users Added: {added} | "
                     f"Users Finished: {finished} | "
-                    f"Users Assigned: {len(self.__assigned_list)}/{self.limit} | "
-                    f"Users Awaiting: {len(self.__awaiting_queue)} | "
-                    f"Users Completed total: {len(self.__completed_list)}")
+                    f"Users Assigned: {assigned_count}/{self.limit} | "
+                    f"Users Awaiting: {awaiting_count} | "
+                    f"Users Completed total: {completed_count}")
 
 
 @dataclass
