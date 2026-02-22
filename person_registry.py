@@ -38,6 +38,7 @@ class Person:
         self.processing_time: int = processing_time
         self.assigned_at: datetime | None = None
         self.registered_at: datetime | None = None
+        self.completed_at: datetime | None = None
         self.status: Statuses = Statuses.UNASSIGNED
         self.id_no: UUID = uuid4()
 
@@ -46,6 +47,7 @@ class Person:
                 f'Email:{self.email}, '
                 f'Assigned:{self.assigned_at}, '
                 f'Registered:{self.registered_at}, '
+                f'Completed:{self.completed_at}, '
                 f'Status:{self.status.name}, '
                 f'Processing time:{self.processing_time} ')
 
@@ -99,15 +101,17 @@ class Registry:
 
     def promote(self):
         if self.__awaiting_queue:
-            next_person = self.__awaiting_queue.pop(0)
-            next_person.assign()
-            self.__assigned_list.append(next_person)
+            if self.available_tickets > 0:
+                next_person = self.__awaiting_queue.pop(0)
+                next_person.assign()
+                self.__assigned_list.append(next_person)
 
     def complete(self, person):
         self.__assigned_list.remove(person)
         self.__seen_ids.discard(person.id_no)
         person.status = Statuses.COMPLETED
         self.__completed_list.append(person)
+        person.completed_at = datetime.now()
         self.promote()
 
     def report(self):
@@ -190,7 +194,7 @@ class PipelineOrchestrator:
 if __name__ == "__main__":
 
     config = Config("config.yaml").load()
-    
+
     if config["registry"]["limit"] <= 0:
         raise ValueError("Registry limit must be positive")
 
